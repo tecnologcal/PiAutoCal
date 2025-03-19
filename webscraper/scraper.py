@@ -82,6 +82,7 @@ def autoLoginAndSetup():  # Login and navigate to calender on canvas
     driver.find_element(
         By.XPATH, '//*[@id="dashboard-planner"]/div/div[9]/div/button'
     ).click()
+    time.sleep(1)
 
 
 def getTasks():
