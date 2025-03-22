@@ -91,7 +91,7 @@ def getAssignments(courses):
                 
         allInfo[courseName] = courseAssignmentList     
                        
-    print(allInfo)
+    print(json.dumps(allInfo, indent=2))
     return allInfo
 
 
