@@ -40,17 +40,59 @@ def getCourses():
 
 
 def getAssignments(courses):
+        
+    today = datetime.date.today()
+    print(today)
+    allInfo = {}
+    
     for courseName, courseID in courses.items():
-        url = f"{baseURL}/api/v1/courses/{courseID}/assignments"
+        url = f"{baseURL}/api/v1/courses/{courseID}/assignments?per_page=50"
 
-        response = requests.get(url, headers=headers)
-        if response.status_code == 200:
+        courseAssignmentList = {}
+        
+        
+        while url: 
+            
+            response = requests.get(url, headers=headers)
+            if response.status_code == 200:
 
-            rawAssignments = response.json()
-            print(rawAssignments)
+                rawAssignments = response.json()
+            
+                
+                for assignment in rawAssignments:
+                    
+                    dueDate = assignment.get('due_at')
+                    if not dueDate:
+                        continue
+                    
+                    dueDate = datetime.datetime.strptime(dueDate, "%Y-%m-%dT%H:%M:%SZ").date()
+                    
+                    if dueDate < today:
+                        continue
+                    
+                    
+                    
+                    assignmentName = assignment.get('name')
+                    if assignmentName:
+                        courseAssignmentList[assignmentName] = dueDate.strftime("%Y-%m-%d")
 
-        else:
-            print("Error getting assignments")
+                next_url = None
+                if 'link' in response.headers:
+                    links = response.headers['link'].split(',')
+                    for link in links:
+                        if 'rel="next"' in link:
+                            next_url = link[link.find("<") + 1: link.find(">")]
+                            break
+
+                url = next_url  
+           
+            else:
+                print(f"Error getting assignments for {courseName}")
+                
+        allInfo[courseName] = courseAssignmentList     
+                       
+    print(allInfo)
+    return allInfo
 
 
 courses = getCourses()
