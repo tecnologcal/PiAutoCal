@@ -15,7 +15,7 @@ processedCourses = {}
 headers = {"Authorization": f"Bearer {apiKey}"}
 
 
-def getCourses():
+def getCanvasCourses():
     url = f"{baseURL}/api/v1/users/self/courses"
 
     response = requests.get(url, headers=headers)
@@ -39,61 +39,58 @@ def getCourses():
         print("Error has occurred while getting classes")
 
 
-def getAssignments(courses):
-        
-    today = datetime.date.today()
+def getCanvasAssignments(courses):
+
+    today = datetime.datetime.today()
     print(today)
     allInfo = {}
-    
+
     for courseName, courseID in courses.items():
-        url = f"{baseURL}/api/v1/courses/{courseID}/assignments?per_page=50"
+        url = f"{baseURL}/api/v1/courses/{courseID}/assignments?per_page=100"
 
         courseAssignmentList = {}
-        
-        
-        while url: 
-            
+
+        while url:
+
             response = requests.get(url, headers=headers)
             if response.status_code == 200:
 
                 rawAssignments = response.json()
-            
-                
                 for assignment in rawAssignments:
-                    
-                    dueDate = assignment.get('due_at')
+
+                    dueDate = assignment.get("due_at")
                     if not dueDate:
                         continue
-                    
-                    dueDate = datetime.datetime.strptime(dueDate, "%Y-%m-%dT%H:%M:%SZ").date()
-                    
+
+                    dueDate = datetime.datetime.strptime(dueDate, "%Y-%m-%dT%H:%M:%SZ")
+
                     if dueDate < today:
                         continue
-                    
-                    
-                    
-                    assignmentName = assignment.get('name')
+
+                    assignmentName = assignment.get("name")
                     if assignmentName:
-                        courseAssignmentList[assignmentName] = dueDate.strftime("%Y-%m-%d")
+                        courseAssignmentList[assignmentName] = dueDate.strftime(
+                            "%Y-%m-%d %H:%M"
+                        )
 
                 next_url = None
-                if 'link' in response.headers:
-                    links = response.headers['link'].split(',')
+                if "link" in response.headers:
+                    links = response.headers["link"].split(",")
                     for link in links:
                         if 'rel="next"' in link:
-                            next_url = link[link.find("<") + 1: link.find(">")]
+                            next_url = link[link.find("<") + 1 : link.find(">")]
                             break
 
-                url = next_url  
-           
+                url = next_url
+
             else:
                 print(f"Error getting assignments for {courseName}")
-                
-        allInfo[courseName] = courseAssignmentList     
-                       
+
+        allInfo[courseName] = courseAssignmentList
+
     print(json.dumps(allInfo, indent=2))
     return allInfo
 
 
-courses = getCourses()
-getAssignments(courses)
+Canvascourses = getCanvasCourses()
+getCanvasAssignments(Canvascourses)
