@@ -14,11 +14,11 @@ SCOPES = [
 ]
 
 filePath = os.path.dirname(__file__)
-relativePath = "credentials.json"
+relativePath = "/secrets/credentials.json"
 newPath = os.path.join(filePath, relativePath)
-tokenFolder = os.path.join(filePath, "tokens")  # Define a folder for tokens
+tokenFolder = os.path.join(filePath, "secrets")  # Define a folder for tokens
 tokenPath = os.path.join(tokenFolder, "token.json")
-print(newPath)
+
 
 if not os.path.exists(tokenFolder):
     os.makedirs(tokenFolder)
@@ -74,7 +74,6 @@ def getGoogleCourses(service):
 def getGoogleAssignments(service, courses):
 
     today = datetime.datetime.today()
-    print(today)
 
     allInfo = {}
 

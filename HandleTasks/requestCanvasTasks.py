@@ -88,9 +88,8 @@ def getCanvasAssignments(courses):
 
         allInfo[courseName] = courseAssignmentList
 
-    print(json.dumps(allInfo, indent=2))
     return allInfo
 
 
 Canvascourses = getCanvasCourses()
-getCanvasAssignments(Canvascourses)
+print(json.dumps(getCanvasAssignments(Canvascourses), indent=2))
