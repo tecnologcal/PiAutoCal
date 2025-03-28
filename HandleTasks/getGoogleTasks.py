@@ -25,9 +25,7 @@ if not os.path.exists(tokenFolder):
 
 
 def authenticate():
-    """Shows basic usage of the Classroom API.
-    Prints the names of the first 10 courses the user has access to.
-    """
+
     creds = None
     # The file token.json stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first
